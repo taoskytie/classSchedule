@@ -16,6 +16,8 @@ def conf():
 		print(all_sections)
 		# 获取所有options
 		print(conf_par.options("班主任"))
+		print(conf_par.options("班主任")[1])
+
 		# 获取对应的值
 		print(conf_par.get("班主任","武广英"))
 	except ConfigParser.NoOptionError:
