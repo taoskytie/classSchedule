@@ -33,6 +33,7 @@ def conf():
 
 
 if __name__ == '__main__':
-	excelRead()
+	# excelRead()
 	# a={"班主任":[{"qq":[1,2]},{"ww":[3,4]}]}
 	# print(a["班主任"][0]["qq"])
+
