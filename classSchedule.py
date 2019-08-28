@@ -1,4 +1,7 @@
 import configparser as ConfigParser
+import copy
+import time
+
 import pandas as pd
 import numpy as np
 import random
@@ -12,12 +15,12 @@ classReserve={'语文':13,'数 学':29, '英语':13, '政 治':9, '生 物':25, 
 # classB={'语文':11,'数 学':5, '英语':5, '政 治':2, '生 物':2, '历 史':3, '地 理':2, '体 育':2, '音 乐':1, '美 术':1, '健 康':1, '信 息':1, '综合实践':1}
 classA=[6,6,5,2,2,3,2,3,1,1,1,1,1]
 classB=[11,5,5,2,2,3,2,2,1,1,1,1,1]
-# 班级可用时间
-allClassTime=np.delete(np.arange(1,41),[7,22,23]).tolist()
-# 教师可用时间
-allclass=np.arange(1,41).tolist()
-#数语外老师特殊时间
-specialTime=[1,2,3,9,10,11,17,18,19,25,26,27,33,34,35]
+# 班级可用时间,去除第一节，八节班会，24、25社团
+allClassTime=np.delete(np.arange(1,41),[0,7,22,23]).tolist()
+# 教师可用时间,去除第一节
+allclass=np.arange(2,41).tolist()
+#数语外老师特殊时间,去除第一节
+specialTime=[2,3,9,10,11,17,18,19,25,26,27,33,34,35]
 class information():
     def __init__(self):
         # self.subject
@@ -33,6 +36,8 @@ class information():
         columns=teacherExcel.columns.values
         #班级时间表
         self.classList=teacherExcel.loc[:,columns[0]].values
+        # 班主任名单
+        self.masterTeacher=teacherExcel.loc[:,columns[1]].values
         #科目
         self.subject=np.delete(columns,[0,1])
         classNumIndex=0
@@ -68,16 +73,26 @@ class information():
             self.classTeacher.update(sigalClass)
 
 
-def scheduleSys(information):
+def scheduleSys(infom):
     # 1-18班班级列表
-    classList = information.classList
+    classList = infom.classList
 
     # 学科顺序表，['语文', '数 学', '英语', '政 治', '生 物', '历 史' ,'地 理' ,'体 育', '音 乐', '美 术', '健 康' ,'信 息' ,'综合实践']
-    subject=information.subject
+    subject=info.subject
 
     #每个老师空余时间表
-    teacherTime = information.teacherinfo.copy()
-    print(teacherTime)
+    teacherTime={}
+    teacherTime = infom.teacherinfo.copy()
+    # print(id(infom.teacherinfo))
+    # print(id(teacherTime))
+    # print(teacherTime["徐盛轶"])
+    # aaa=teacherTime
+    # aaa["徐盛轶"].remove(2)
+    # print(id(aaa))
+    # print(aaa["徐盛轶"])
+    # print(teacherTime["徐盛轶"])
+    # print(infom.teacherinfo["徐盛轶"])
+    # return False
 
     # 所有班级空余时间表
     # classTime={}
@@ -87,7 +102,7 @@ def scheduleSys(information):
     # print(classTime)
 
     # 每班对应老师名单
-    classTeacher=information.classTeacher.copy()
+    classTeacher=infom.classTeacher.copy()
 
     # 每班老师排版表，输出
     classTeacherPlan={}
@@ -97,25 +112,34 @@ def scheduleSys(information):
 
     # 循环遍历每个班
     for i in classList:
+        print("开始遍历班级："+str(i))
         if i<=4:
             classSubjectNum=classA.copy()
         else:
             classSubjectNum = classB.copy()
         currentClassTime=allClassTime.copy()
         teacherList=classTeacher[i]
-        print(currentClassTime)
-        print(teacherList)
+        # print(currentClassTime)
+        # print(teacherList)
         # 遍历每个班所有老师
         for teacherIndex in range(len(teacherList)):
             teacherName=teacherList[teacherIndex]
+            print("开始遍历老师："+teacherName)
             subjectName=subject[teacherIndex]
             currentTeacherTime=teacherTime[teacherName]
             # 求老师时间和班级时间交集
             commonTime=list(set(currentClassTime).intersection(set(currentTeacherTime)))
-            if len(commonTime)==0:
-                break
+            if len(commonTime)==0 or len(commonTime)<classSubjectNum[teacherIndex]:
+                print(teacherName+"老师的空余时间为："+str(currentTeacherTime))
+                print("班级和老师共同时间为"+str(commonTime))
+                print("需要上课节数："+str(classSubjectNum[teacherIndex]))
+                return False
             # 生成随机指数
-            indexList=random.sample(range(0,len(commonTime)-1),classSubjectNum[teacherIndex])
+            try:
+                indexList=random.sample(range(0,len(commonTime)),classSubjectNum[teacherIndex])
+            except:
+                print(commonTime)
+                print(classSubjectNum[teacherIndex])
             # print(currentClassTime)
             # print(currentTeacherTime)
             # print(commonTime)
@@ -123,30 +147,69 @@ def scheduleSys(information):
             # 遍历出该老师所有课次
             for timeindex in indexList:
                 # 指定的哪节课
-                teacherClass=commonTime[timeindex]
+                try:
+                    teacherClass=commonTime[timeindex]
+                except:
+                    print("需要上课节数：" + str(classSubjectNum[teacherIndex]))
+                    print("随机选课指数为："+str(indexList))
+                    print("班级和老师共同时间为"+str(commonTime))
+                    return False
+                # print("-----"+str(teacherClass))
                 # 班级时间记录
                 if i in classSubjectPlan.keys():
                     # 更新学科排班表
+                    oldsubjectList={}
                     oldsubjectList=classSubjectPlan[i]
+                    # print("++++"+str(i))
+                    # print(classSubjectPlan)
+                    # print(classSubjectPlan[i])
                     singleSubjectList={teacherClass:subjectName}
-                    newsubjectList=oldsubjectList.update(singleSubjectList)
-                    classSubjectPlan[i]=newsubjectList
+                    # print(singleSubjectList)
+                    oldsubjectList.update(singleSubjectList)
+                    # print(oldsubjectList)
+                    classSubjectPlan[i]=oldsubjectList
                     # 更新教师排班表
                     oldTeacherList=classTeacherPlan[i]
                     singleTeacherList={teacherClass:teacherName}
-                    newTeacherList=oldTeacherList.update(singleTeacherList)
-                    classTeacherPlan[i]=newTeacherList
+                    oldTeacherList.update(singleTeacherList)
+                    classTeacherPlan[i]=oldTeacherList
                 else:
                     singleSubjectList = {teacherClass: subjectName}
                     classSubjectPlan[i]=singleSubjectList
                     singleTeacherList = {teacherClass: teacherName}
                     classTeacherPlan[i] =singleTeacherList
+                # 从当前班级课表空闲时间中删除这节课
+                currentClassTime.remove(teacherClass)
+                # 当前这个教师空余时间删除这节课
+                # print(teacherTime[teacherName])
+                currentTeacherTime.remove(teacherClass)
+                print(teacherTime[teacherName])
+                print(infom.teacherinfo[teacherName])
+
+
+    print(classTeacherPlan)
+    print(classSubjectPlan)
+    return True
 
 if __name__ == '__main__':
-    information=information()
+
+    # print(information.masterTeacher)
     # for i in information.classList:
     #     print(i)
     # print(information.classList)
     # print(information.classTeacher)
     # print(len(information.classTeacher))
-    scheduleSys(information)
+    # print(information.teacherinfo["徐盛轶"])
+    # time.sleep(10)
+    # print(scheduleSys(info))
+    # info= information()
+
+    # print(information.teacherinfo["徐盛轶"])
+    # time.sleep(1)
+    # # print(allclass)
+    # print(scheduleSys(info))
+    whileindex=False
+    while(not whileindex):
+        info = information()
+        whileindex=scheduleSys(info)
+        print(whileindex)

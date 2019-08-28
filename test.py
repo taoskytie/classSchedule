@@ -36,9 +36,33 @@ def conf():
 		print(ConfigParser.NoOptionError)
 
 
+
+
+
+class mycopy():
+	def __init__(self):
+		self.copyTest()
+
+	def copyTest(self):
+		self.a={'name':[1,2,3,4]}
+
+def test1(argu):
+	d=argu.a.copy()
+	c=d.copy()
+	print(argu.a)
+	c['name'].remove(1)
+	print(c)
+	print(argu.a)
+
 if __name__ == '__main__':
-	excelRead()
+	# excelRead()
 	# a={"班主任":[{"qq":[1,2]},{"ww":[3,4]}]}
 	# print(a["班主任"][0]["qq"])
-
-
+	b=mycopy()
+	# print(b.a)
+	# c=b.a.copy()
+	# c.remove(1)
+	# print(b.a)
+	test1(b)
+	b = mycopy()
+	test1(b)
