@@ -277,12 +277,12 @@ def scheduleSys(infom):
             dayNum=list(mydayList.keys())
             random.shuffle(dayNum)
             if len(dayNum)<dayClassNum:
-                print("匹配空闲天数："+str(len(dayNum))+",课程需要天数："+str(dayClassNum))
+                # print("匹配空闲天数："+str(len(dayNum))+",课程需要天数："+str(dayClassNum))
                 if len(commonTime)<dayClassNum:
-                    print("遍历班级（其他）：" + str(i)+"，学科："+subjectName+",老师："+teacherName)
-                    print("当前班级课程剩余时间："+str(currentClassTime))
-                    print("当前班级课程时间："+str(len(classSubjectPlan[i]))+str(classSubjectPlan[i]))
-                    print("匹配空闲课数：" + str(len(commonTime)) + ",课程需要节数：" + str(dayClassNum))
+                    # print("遍历班级（其他）：" + str(i)+"，学科："+subjectName+",老师："+teacherName)
+                    # print("当前班级课程剩余时间："+str(currentClassTime))
+                    # print("当前班级课程时间："+str(len(classSubjectPlan[i]))+str(classSubjectPlan[i]))
+                    # print("匹配空闲课数：" + str(len(commonTime)) + ",课程需要节数：" + str(dayClassNum))
                     return False
                 indexList=random.sample(range(0,len(commonTime)),dayClassNum)
                 for chooseIndex in indexList:
@@ -443,7 +443,7 @@ def excelWrite(classList,excelTeacher,masterTeacherList,iteatorNum,classBestInde
 if __name__ == '__main__':
     # 初始化老师名单课表，keys为老师姓名，teacheCourseNum值为0，teacheCourseList值为[]
     info = information()
-    teacheCourseNum={}.fromkeys(list(info.teacherinfo.keys()), 0)
+    # teacheCourseNum={}.fromkeys(list(info.teacherinfo.keys()), 0)
     teacheCourseList = {}.fromkeys(list(info.teacherinfo.keys()), 0)
     masterTeacherList=list(info.masterTeacher)
     # print(masterTeacherList)
@@ -455,21 +455,21 @@ if __name__ == '__main__':
     iteatorNum=1000
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
-        print("+++++++++++++++++++++++++++++迭代了"+str(iteatorIndex+1)+"次")
+        teacheCourseNum = {}.fromkeys(list(info.teacherinfo.keys()), 0)
         whileindex=False
         while(not whileindex):
             info = information()
             whileindex=scheduleSys(info)
-            print(whileindex)
         numWeight=checkWight(whileindex[0])
         numVari=averageFourAndFive(whileindex[1],teacheCourseNum)
         # 课程权重：中午课程=6:1（权重130000多点，var2左右），修改课程权重后，最好修改下两者比例
-        print("numWeigrt"+str(numWeight))
-        print("numVari"+str(numVari))
+        # print("numWeigrt"+str(numWeight))
+        # print("numVari"+str(numVari))
         classBestNum=numWeight+numVari*1000
         if classBestNum<classBestIndex:
             classBestIndex=classBestNum
             classBestplan=copy.deepcopy(whileindex)
+        print("+++++++++++++++++++++++++++++迭代了" + str(iteatorIndex + 1) + "次。指标数："+str(classBestIndex)+"。最新指标数："+str(classBestNum))
         iteatorIndex=iteatorIndex+1
     print(classBestIndex)
     print(classBestplan)
