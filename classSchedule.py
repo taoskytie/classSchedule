@@ -156,6 +156,8 @@ def scheduleSys(infom):
         teacherList=classTeacher[spicalClassNum]
         # print(currentClassTime)
         # print(teacherList)
+        weekDayIndex=[0,0,1,1,2,2]
+        random.shuffle(weekDayIndex)
         # 遍历每个班数语外老师
         for teacherIndex in [0,1,2]:
             teacherName=teacherList[teacherIndex]
@@ -181,6 +183,14 @@ def scheduleSys(infom):
                 singleDayIndex=random.sample(range(0,len(mydayList[classDayIndex])),dayClassNum[classDayIndex])
                 for n in singleDayIndex:
                     teacherClassList.append(mydayList[classDayIndex][n]+1+classDayIndex*8)
+
+                minNum=min(mydayList[classDayIndex])+1+classDayIndex*8
+                if (minNum not in teacherClassList)and(len(teacherClassList)>0)and(weekDayIndex[classDayIndex]==teacherIndex):
+                    teacherClassList[teacherClassList.index(max(teacherClassList))]=minNum
+                    # print(min(mydayList[classDayIndex]))
+                    # print(teacherClassList)
+            # print(teacherClassList)
+            # time.sleep(1000)
             # indexList=random.sample(range(0,len(commonTime)),classSubjectNum[teacherIndex])
             # print(teacherClassList)
             # except:
@@ -269,6 +279,7 @@ def scheduleSys(infom):
             if len(dayNum)<dayClassNum:
                 print("匹配空闲天数："+str(len(dayNum))+",课程需要天数："+str(dayClassNum))
                 if len(commonTime)<dayClassNum:
+                    print("遍历班级（其他）：" + str(i)+"，学科："+subjectName+",老师："+teacherName)
                     print("当前班级课程剩余时间："+str(currentClassTime))
                     print("当前班级课程时间："+str(len(classSubjectPlan[i]))+str(classSubjectPlan[i]))
                     print("匹配空闲课数：" + str(len(commonTime)) + ",课程需要节数：" + str(dayClassNum))
