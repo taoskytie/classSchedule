@@ -444,6 +444,7 @@ if __name__ == '__main__':
     iteatorNum=200
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
+        print("+++++++++++++++++++++++++++++迭代了"+str(iteatorIndex+1)+"次")
         whileindex=False
         while(not whileindex):
             info = information()
