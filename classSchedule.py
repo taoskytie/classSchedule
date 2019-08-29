@@ -156,7 +156,7 @@ def scheduleSys(infom):
         teacherList=classTeacher[spicalClassNum]
         # print(currentClassTime)
         # print(teacherList)
-        weekDayIndex=[0,0,1,1,2,2]
+        weekDayIndex=[0,1,1,2,2]
         random.shuffle(weekDayIndex)
         # 遍历每个班数语外老师
         for teacherIndex in [0,1,2]:
@@ -452,7 +452,7 @@ if __name__ == '__main__':
     classBestIndex=float("inf")
     classBestplan=[]
     # 迭代次数
-    iteatorNum=1000
+    iteatorNum=1
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
         teacheCourseNum = {}.fromkeys(list(info.teacherinfo.keys()), 0)
