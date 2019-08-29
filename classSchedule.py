@@ -382,7 +382,7 @@ def allTeacherList(teacherPlan,teacheCourseList):
                 teacheCourseList[teacherName].append(argList)
     return teacheCourseList
 
-def excelWrite(classList,excelTeacher,masterTeacherList,iteatorNum):
+def excelWrite(classList,excelTeacher,masterTeacherList,iteatorNum,classBestIndex):
     book = xlwt.Workbook()
     titleRow = ["星期一", "星期二", "星期三", "星期四", "星期五"]
     titleCol = ["第1节", "第2节", "第3节", "第4节", "第5节", "第6节", "第7节", "第8节"]
@@ -438,7 +438,7 @@ def excelWrite(classList,excelTeacher,masterTeacherList,iteatorNum):
         if teacherName in masterTeacherList:
             sheet.write(rowIdex + 1, colIndex + 1,masterTeacherList.index(teacherName)+1)
         teacherIndex+=1
-    book.save('C:/Users/sky/Desktop/课表/乌鲁木齐市58中2019-2020学年第一学期课表('+str(iteatorNum)+').xls')
+    book.save('C:/Users/sky/Desktop/课表/乌鲁木齐市58中2019-2020学年第一学期课表('+str(iteatorNum)+"_"+str(int(classBestIndex))+').xls')
 
 if __name__ == '__main__':
     # 初始化老师名单课表，keys为老师姓名，teacheCourseNum值为0，teacheCourseList值为[]
@@ -452,7 +452,7 @@ if __name__ == '__main__':
     classBestIndex=float("inf")
     classBestplan=[]
     # 迭代次数
-    iteatorNum=200
+    iteatorNum=1000
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
         print("+++++++++++++++++++++++++++++迭代了"+str(iteatorIndex+1)+"次")
@@ -475,4 +475,4 @@ if __name__ == '__main__':
     print(classBestplan)
     excelTeacherList=allTeacherList(classBestplan[1],teacheCourseList)
     print(excelTeacherList)
-    excelWrite(classBestplan,excelTeacherList,masterTeacherList,iteatorNum)
+    excelWrite(classBestplan,excelTeacherList,masterTeacherList,iteatorNum,classBestIndex)
