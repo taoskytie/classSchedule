@@ -347,13 +347,24 @@ def scheduleSys(infom):
     lastclassTeacherPlan=classTeacherPlan
     return value
 
-# 计算所有课程课课程时间权重
+# 计算所有课程课课程时间权重，以及每个课权重乘积的方差
 def checkWight(classPlan):
+    bestList={}
     best=0
+
     for classNum in classPlan.keys():
+        classBest = 0
         for courseNum in classPlan[classNum].keys():
             best=best+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
-    return best
+            classBest=classBest+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
+        classBestList={classNum:classBest}
+        bestList.update(classBestList)
+    # print(bestList)
+    # print(np.var(list(bestList.values())))
+    # print(best)
+    classVari=np.var(list(bestList.values()))
+    # 全部课程时间权重乘积和每班权重乘积的方差，分别12000和6000左右
+    return (best+2*classVari)/2
 
 #计算每个老师4,5节课的次数，方差要最小
 def averageFourAndFive(teacherPlan,teacheCourseNum):
@@ -452,7 +463,7 @@ if __name__ == '__main__':
     classBestIndex=float("inf")
     classBestplan=[]
     # 迭代次数
-    iteatorNum=1
+    iteatorNum=1000
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
         teacheCourseNum = {}.fromkeys(list(info.teacherinfo.keys()), 0)
