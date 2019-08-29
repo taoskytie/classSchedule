@@ -19,7 +19,7 @@ classReserve={'语文':13,'数 学':29, '英语':13, '政 治':9, '生 物':25, 
 masterSubject=[5,0,2,0,0,0,2,1,1,3,0,2,0,2,2,0,1,0]
 masterteacherSubject=['历 史','语文','英语','语文','语文','语文', '英语','数 学','数 学','政 治','语文','英语','语文','英语','英语','语文', '语文','数 学' ]
 # 课程设置
-classA=[6,6,5,2,2,3,2,3,1,1,1,1,1]
+classA=[7,6,5,2,2,3,2,3,1,1,1,1,1]
 classB=[11,5,5,2,2,3,2,2,1,1,1,1,1]
 # classDayA=[[1,1,1,1,2],[1,1,1,1,2],[1,1,1,1,1],[1,1,0,0,0],[1,1,0,0,0],[1,1,1,0,0],[1,1,0,0,0],[1,1,1,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]]
 # classDayB=[[3,2,2,2,2],[1,1,1,1,1],[1,1,1,1,1],[1,1,0,0,0],[1,1,0,0,0],[1,1,1,0,0],[1,1,0,0,0],[1,1,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]]
@@ -349,22 +349,36 @@ def scheduleSys(infom):
 
 # 计算所有课程课课程时间权重，以及每个课权重乘积的方差
 def checkWight(classPlan):
-    bestList={}
-    best=0
-
-    for classNum in classPlan.keys():
-        classBest = 0
-        for courseNum in classPlan[classNum].keys():
-            best=best+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
-            classBest=classBest+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
-        classBestList={classNum:classBest}
-        bestList.update(classBestList)
-    # print(bestList)
-    # print(np.var(list(bestList.values())))
-    # print(best)
-    classVari=np.var(list(bestList.values()))
-    # 全部课程时间权重乘积和每班权重乘积的方差，分别12000和6000左右
-    return (best+2*classVari)/2
+	bestList={}
+	best=0
+	for classNum in classPlan.keys():
+		multi_x=1
+		multi_y=1
+		if classNum<=4:
+			noneList=list(set(list(classPlan.keys()))^set(allClassTime))
+			# 不要第一节或者第二节是自习
+			for i in noneList:
+				if(i%8==1):
+					multi_y=100
+				if (i % 8 == 2):
+					multi_y = 2
+			#
+			noneIndex=0
+			while(noneIndex<len(noneList)):
+				noneList[noneIndex]=(noneList[noneIndex]-1)//8
+				noneIndex+=1
+			if(len(set(noneList))==1):
+				multi_x=100
+		classBest = 0
+		for courseNum in classPlan[classNum].keys():
+			best=best+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
+			classBest=classBest+((courseNum-1)%8+1)*classWeight[classPlan[classNum][courseNum]]
+		classBestList={classNum:(classBest*multi_x*multi_y)}
+		bestList.update(classBestList)
+	classVari=np.var(list(bestList.values()))
+	print(classVari)
+	# 全部课程时间权重乘积和每班权重乘积的方差，分别12000和6000左右
+	return (2*best+classVari)/2
 
 #计算每个老师4,5节课的次数，方差要最小
 def averageFourAndFive(teacherPlan,teacheCourseNum):
@@ -463,7 +477,7 @@ if __name__ == '__main__':
     classBestIndex=float("inf")
     classBestplan=[]
     # 迭代次数
-    iteatorNum=1000
+    iteatorNum=30000
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
         teacheCourseNum = {}.fromkeys(list(info.teacherinfo.keys()), 0)
