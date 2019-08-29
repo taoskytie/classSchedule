@@ -140,7 +140,7 @@ def scheduleSys(infom):
     spicalClassNum=1
     while spicalClassNum<=len(classList):
         # spicalErrorIndex = 0
-        print("开始遍历班级(语数外)："+str(spicalClassNum))
+        # print("开始遍历班级(语数外)："+str(spicalClassNum))
         classSubjectNum=classTakeOutMaster(spicalClassNum)
         classSubjectDayNum=numToList(classSubjectNum)
         # if i<=4:
@@ -227,6 +227,7 @@ def scheduleSys(infom):
     # 遍历每个班语数外以外其他课程
     i=1
     while(i<=len(classList)):
+        # print("开始遍历班级（其他）："+str(i))
         classSubjectNum = classTakeOutMaster(i)
         # if i<=4:
         #     classSubjectNum=classA.copy()
@@ -244,10 +245,10 @@ def scheduleSys(infom):
             teacherName = teacherList[teacherIndex]
 
             subjectName = subject[teacherIndex]
-            print(subjectName)
+            # print(subjectName)
             currentTeacherTime = teacherTime[teacherName]
 
-            print("开始遍历老师：" + teacherName+str(i)+ ",空闲时间："+str(currentTeacherTime))
+            # print("开始遍历老师：" + teacherName+str(i)+ ",空闲时间："+str(currentTeacherTime))
             # 求老师时间和班级时间交集
             commonTime = list(set(currentClassTime).intersection(set(currentTeacherTime)))
             # if len(commonTime) == 0 or len(commonTime) < classSubjectNum[teacherIndex]:
@@ -285,7 +286,7 @@ def scheduleSys(infom):
                     # print("mydayList[classDayIndex][singleDayIndex]"+str(mydayList[classDayIndex][singleDayIndex]))
                     teacherClassList.append(mydayList[classDayIndex][singleDayIndex] + 1 + classDayIndex * 8)
             # indexList=random.sample(range(0,len(commonTime)),classSubjectNum[teacherIndex])
-            print("++++"+str(teacherClassList))
+            # print("++++"+str(teacherClassList))
             # except Exception as e:
             #     print(e)
             #     print(commonTime)
@@ -440,7 +441,7 @@ if __name__ == '__main__':
     classBestIndex=float("inf")
     classBestplan=[]
     # 迭代次数
-    iteatorNum=1
+    iteatorNum=200
     iteatorIndex=0
     while(iteatorIndex<iteatorNum):
         whileindex=False
